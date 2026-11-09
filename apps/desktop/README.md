@@ -403,3 +403,5 @@ The account provider’s `embeddedPageDist` configuration adds a `dist` query pa
 Pre-launch CDN and capacity decisions are tracked in the [Desktop update proposal](../../.agents/notes/proposed/feature/2026-09-08-desktop-update-policy-and-installation.md#cdn-and-capacity-qualification).
 
 The Windows application icon and tray artwork use the supplied 察心智能 image. The Windows package displays the 察心智能 product name; existing installation and user-data paths may differ from previous builds. Verify upgrade and data access before distribution.
+
+Local unsigned macOS packages also use the 察心智能 application name and supplied icon. These builds are not notarized and do not include the Computer Use helper.

@@ -403,3 +403,5 @@ node apps/desktop/node_modules/pnpm/bin/pnpm.mjs --dir apps/desktop run test:upd
 上线前 CDN 与容量决策见[桌面更新提案](../../.agents/notes/proposed/feature/2026-09-08-desktop-update-policy-and-installation.zh.md#cdn-and-capacity-qualification)。
 
 Windows 应用和托盘图标使用提供的察心智能图片。Windows 安装包显示察心智能产品名；安装路径及用户数据路径可能与旧版不同，分发前须验证升级和数据访问。
+
+macOS 本地无签名安装包也使用察心智能应用名和提供的图标。这些构建未经公证，不包含 Computer Use 辅助程序。
