@@ -405,3 +405,5 @@ node apps/desktop/node_modules/pnpm/bin/pnpm.mjs --dir apps/desktop run test:upd
 Windows 应用和托盘图标使用提供的察心智能图片。Windows 安装包显示察心智能产品名；安装路径及用户数据路径可能与旧版不同，分发前须验证升级和数据访问。
 
 macOS 本地无签名安装包也使用察心智能应用名和提供的图标。这些构建未经公证，不包含 Computer Use 辅助程序。
+
+打包后的察心智能使用 `chaxin-intelligence` Electron 身份。除非通过 `DSH_HOME` 明确指定其他目录，Host 数据保存在 Electron 用户数据目录旁带 `-harness` 后缀的同级目录中，与官方版共享目录隔离，卸载时保留。

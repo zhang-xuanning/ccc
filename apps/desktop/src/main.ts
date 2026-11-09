@@ -27,6 +27,7 @@ import {
   type MenuItemConstructorOptions,
 } from 'electron'
 import { resolveDesktopPaths } from './paths.ts'
+import { resolveDesktopLaunchEnvironment } from './launch-environment.ts'
 import { DesktopProjectManager } from './project-manager.ts'
 import { DesktopHostFatalError, DesktopHostProcess, DesktopHostUncleanExitError } from './host-process.ts'
 import { DesktopPlatformView, PLATFORM_IPC, platformBounds } from './platform-view.ts'
@@ -80,6 +81,7 @@ let shuttingDown = false
  * development restart command. The installer handoff has its own before-quit branch.
  */
 let skipQuitConfirmation = false
+const desktopEnvironment = resolveDesktopLaunchEnvironment(process.env, app.getPath('userData'), app.isPackaged)
 let windowsLanguage: string | undefined = readDesktopLocaleCache(app.getPath('userData'))
 /**
  * Whether the backend has reached ready: false until the first ready, back to
@@ -107,7 +109,7 @@ const recovery = new DesktopFatalRecovery({
   show: options => dialog.showMessageBox(options),
   stop: () => { shuttingDown = true; return stopForRecovery() },
   disablePlugins: async () => {
-    const manager = new DesktopProjectManager(resolveDesktopPaths(), runtimeResources())
+    const manager = new DesktopProjectManager(resolveDesktopPaths(desktopEnvironment.DSH_HOME), runtimeResources())
     const backupPath = await manager.disableAllPlugins()
     console.info('Desktop profile recovery completed:', { profilePatchBackup: backupPath ?? null, homePatch: 'unchanged' })
   },
@@ -375,7 +377,7 @@ async function main(): Promise<void> {
   const journalDirectory = process.env.DSH_DESKTOP_UPDATE_JOURNAL_DIR
   const updateJournal = journalDirectory === undefined ? undefined : new DesktopUpdateJournal(journalDirectory, app.getVersion())
   const resources = runtimeResources()
-  const paths = resolveDesktopPaths()
+  const paths = resolveDesktopPaths(desktopEnvironment.DSH_HOME)
   const development = !app.isPackaged
   const primaryRuntime = development
     ? developmentPrimaryRuntime()
@@ -386,13 +388,13 @@ async function main(): Promise<void> {
   const loginShellRead = new AbortController()
   // The probe runs in its own process group, which outlives Desktop unless the read is aborted.
   app.on('will-quit', () => { loginShellRead.abort() })
-  const loginShell = readDesktopLoginShellEnvironment(process.env, resolveDesktopLoginShellConfig(process.env), {
+  const loginShell = readDesktopLoginShellEnvironment(desktopEnvironment, resolveDesktopLoginShellConfig(desktopEnvironment), {
     signal: loginShellRead.signal,
   }).then((result) => {
     for (const failure of result.failures) console.warn(`desktop login shell: ${failure.shell} failed (${failure.reason})`)
     return result.environment
   })
-  let hostEnvironment: NodeJS.ProcessEnv = process.env
+  let hostEnvironment: NodeJS.ProcessEnv = desktopEnvironment
   const prepareHostEnvironment = async (): Promise<void> => { hostEnvironment = await loginShell }
   let quitting = false
   let startup: Promise<void> | undefined

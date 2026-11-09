@@ -66,7 +66,12 @@ export function createElectronBuilderConfig(
   if (skipNotarization && (unsigned || resolvedPlatform !== 'darwin')) throw new Error('Skipping notarization requires a signed macOS build')
   const packagesMacOS = targetPlatform === 'darwin' || (targetPlatform === undefined && hostPlatform === 'darwin')
   const packagesWindows = resolvedPlatform === 'win32'
-  const policy = packagesMacOS && unsigned ? undefined : resolveDesktopPolicyEnvironment(env)
+  if (env.DSH_DESKTOP_LOCAL_UNSIGNED !== undefined && !['0', '1'].includes(env.DSH_DESKTOP_LOCAL_UNSIGNED)) {
+    throw new Error('desktop package: DSH_DESKTOP_LOCAL_UNSIGNED must be 0 or 1')
+  }
+  const localWindows = env.DSH_DESKTOP_LOCAL_UNSIGNED === '1'
+  if (localWindows && (!packagesWindows || !unsigned)) throw new Error('desktop package: local Windows mode requires unsigned Windows packaging')
+  const policy = (packagesMacOS && unsigned) || localWindows ? undefined : resolveDesktopPolicyEnvironment(env)
   if (resolvedPlatform === 'win32') installWindowsDirectoryInstaller()
   const macOSSigning = packagesMacOS && !unsigned ? resolveMacOSSigningEnvironment(env) : undefined
   if (packagesMacOS && !unsigned && !skipNotarization) resolveMacOSNotarizationEnvironment(env)
@@ -110,6 +115,8 @@ export function createElectronBuilderConfig(
     appId,
     protocols: [{ name: 'DeepSeek Harness', schemes: ['dsh'] }],
     extraMetadata: {
+      name: 'chaxin-intelligence',
+      productName: '察心智能',
       dshDesktopAppId: appId,
       dshDesktopUpdateChannel: update?.channel ?? 'nightly',
       ...(policy === undefined ? {} : { dshMandatoryUpdatePolicy: policy }),

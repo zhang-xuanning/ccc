@@ -405,3 +405,5 @@ Pre-launch CDN and capacity decisions are tracked in the [Desktop update proposa
 The Windows application icon and tray artwork use the supplied 察心智能 image. The Windows package displays the 察心智能 product name; existing installation and user-data paths may differ from previous builds. Verify upgrade and data access before distribution.
 
 Local unsigned macOS packages also use the 察心智能 application name and supplied icon. These builds are not notarized and do not include the Computer Use helper.
+
+Packaged 察心智能 builds use the `chaxin-intelligence` Electron identity. Unless `DSH_HOME` explicitly selects another home, Host data lives in a sibling of Electron user data with the `-harness` suffix, separate from the official shared home and retained by uninstall.

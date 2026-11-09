@@ -305,3 +305,5 @@ Keep the generated installer, its version and packaging records together. Review
 ## Dev Note
 
 XXX: Evaluate disk-space monitoring, a maintenance entry point and automatic eviction if disk shortages, sustained cache growth or frequent manual cleanup occur. Any automated cleanup would need coordination with every cache user.
+
+The separate `chaxin-windows.yml` workflow builds an unsigned Windows x64 installer on `windows-2025`. It calls `package:win:x64:unsigned --local`, an explicit standalone mode that reads no release dotenv, uses no update policy or feed, and cannot be combined with signing. Existing signed and configured unsigned workflows keep their settings and routing. Download the `chaxin-windows-x64-installer` artifact after success; it includes the EXE and SHA-256 file.
