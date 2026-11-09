@@ -233,3 +233,5 @@ Serialization of the empty retry message depends on the adapter. Prefix reuse de
 None.
 
 </details>
+
+The empty message view displays the localized headline without a brand logo.

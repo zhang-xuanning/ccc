@@ -233,3 +233,5 @@ selector 必须是 owner currency 的纯函数。非 null 返回值作为 `match
 无。
 
 </details>
+
+空白消息界面显示本地化标题，不显示品牌 Logo。
